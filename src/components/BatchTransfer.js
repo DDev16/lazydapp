@@ -55,20 +55,20 @@ const BatchTransfer = () => {
     <div className="batch-transfer">
       <h2>Batch Transfer</h2>
       <div className="recipient">
-        <label>Recipient:</label>
-        <input type="text" value={recipient} onChange={handleRecipientChange} />
+        <label htmlFor="recipient">Recipient:</label>
+        <input id="recipient" type="text" value={recipient} onChange={handleRecipientChange} />
       </div>
       <div className="token-ids">
         <label>Token IDs:</label>
         {tokenIds.map((tokenId, index) => (
           <div className="token-id" key={index}>
             <input type="text" value={tokenId} onChange={(e) => handleTokenIdChange(e, index)} />
-            <button onClick={() => handleRemoveTokenId(index)}>Remove</button>
+            <button className="remove-button" onClick={() => handleRemoveTokenId(index)}>Remove</button>
           </div>
         ))}
-        <button onClick={handleAddTokenId}>Add Token ID</button>
+        <button className="add-button" onClick={handleAddTokenId}>Add Token ID</button>
       </div>
-      <button onClick={handleBatchTransfer}>Batch Transfer</button>
+      <button className="batch-transfer-button" onClick={handleBatchTransfer}>Batch Transfer</button>
     </div>
   );
 };

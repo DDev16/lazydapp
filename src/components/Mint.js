@@ -1,10 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Web3Context } from '../utils/Web3Provider';
 import { NFTStorage, File } from 'nft.storage';
-import './Mint.css'; // Import the CSS file for styling
+import './Mint.css';
 
-// Initialize the NFTStorage client
-const client = new NFTStorage({ token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDdGOTA4QjNBRDJGMDFGNjE2MjU1MTA0ODIwNjFmNTY5Mzc2QTg3MjYiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY3OTI5MDE5ODQyMCwibmFtZSI6Ik5FV0VTVCJ9.FGtIrIhKhgSx-10iVlI4sM_78o7jSghZsG5BpqZ4xfA' });
+const client = new NFTStorage({
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDdGOTA4QjNBRDJGMDFGNjE2MjU1MTA0ODIwNjFmNTY5Mzc2QTg3MjYiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY3OTI5MDE5ODQyMCwibmFtZSI6Ik5FV0VTVCJ9.FGtIrIhKhgSx-10iVlI4sM_78o7jSghZsG5BpqZ4xfA', // Replace with your NFT Storage token
+});
 
 const Mint = () => {
   const { web3, contract } = useContext(Web3Context);
@@ -14,6 +15,27 @@ const Mint = () => {
   const [isMinting, setIsMinting] = useState(false);
   const [imagePreview, setImagePreview] = useState('');
   const [formError, setFormError] = useState('');
+  const [freeMints, setFreeMints] = useState(2); // Track the number of free mints for the current user
+  const mintingFee = 50; // Specify the minting fee in ether
+
+  useEffect(() => {
+    // Fetch the number of free mints for the current user
+    const fetchFreeMints = async () => {
+      try {
+        const accounts = await web3.eth.getAccounts();
+        const user = accounts[0];
+
+        // Call the contract's function to get the number of free mints for the user
+        const numFreeMints = await contract.methods.getFreeMints(user).call();
+
+        setFreeMints(2 - numFreeMints);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchFreeMints();
+  }, [web3, contract]);
 
   const handleImageUpload = async (e) => {
     try {
@@ -37,10 +59,25 @@ const Mint = () => {
     try {
       setIsMinting(true);
       const accounts = await web3.eth.getAccounts();
-      await contract.methods.mint(name, description, uri).send({ from: accounts[0] });
+      const user = accounts[0];
+
+      if (freeMints > 0) {
+        // Mint token for free
+        await contract.methods.mint(name, description, uri).send({ from: user });
+
+        setFreeMints((prevFreeMints) => prevFreeMints - 1);
+      } else {
+        // Charge the minting fee
+        const weiAmount = web3.utils.toWei(mintingFee.toString(), 'ether');
+        const transaction = contract.methods.mint(name, description, uri);
+        const gas = await transaction.estimateGas({ from: user, value: weiAmount });
+
+        await transaction.send({ from: user, value: weiAmount, gas });
+      }
+
       setIsMinting(false);
       setFormError('');
-      alert('Token minted successfully!'); // Consider replacing this with a nicer success notification
+      alert('Token minted successfully!');
     } catch (error) {
       console.error(error);
       setIsMinting(false);
@@ -50,19 +87,24 @@ const Mint = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add validation logic here
+
     if (name.trim() === '' || description.trim() === '' || uri.trim() === '') {
       setFormError('Please fill in all the fields');
       return;
     }
+
     mintToken();
   };
 
   return (
     <div className="mint-container">
-      <h1 className="mint-title" aria-label="Mint a new token">Mint Token</h1>
+      <h1 className="mint-title" aria-label="Mint a new token">
+        Mint Token
+      </h1>
       <form className="mint-form" onSubmit={handleSubmit} aria-label="Mint token form">
-        <label htmlFor="name" className="mint-label">Name:</label>
+        <label htmlFor="name" className="mint-label">
+          Name:
+        </label>
         <input
           type="text"
           id="name"
@@ -72,7 +114,9 @@ const Mint = () => {
           onChange={(e) => setName(e.target.value)}
           aria-label="Enter token name"
         />
-        <label htmlFor="description" className="mint-label">Description:</label>
+        <label htmlFor="description" className="mint-label">
+          Description:
+        </label>
         <input
           type="text"
           id="description"
@@ -82,7 +126,9 @@ const Mint = () => {
           onChange={(e) => setDescription(e.target.value)}
           aria-label="Enter token description"
         />
-        <label htmlFor="image" className="mint-label">Image:</label>
+        <label htmlFor="image" className="mint-label">
+          Image:
+        </label>
         <input
           type="file"
           id="image"
@@ -96,6 +142,10 @@ const Mint = () => {
           </div>
         )}
         {formError && <div className="form-error">{formError}</div>}
+        <div>
+          <label className="mint-label mint-label-free">Remaining Free Mints: {freeMints}</label>
+        </div>
+        <div className="mint-fee">Minting Fee: {mintingFee} ETH</div>
         <button type="submit" className="mint-button" disabled={isMinting} aria-label="Mint token">
           {isMinting ? 'Minting...' : 'Mint'}
         </button>

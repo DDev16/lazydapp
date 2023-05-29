@@ -81,3 +81,23 @@
     text-align: center;
   }
   
+  .mint-label-free {
+    font-size: 14px;
+    color: green;
+    margin-bottom: 10px;
+    position: relative;
+    display: inline-block;
+  }
+  
+  .mint-label-free::after {
+    content: 'FREE';
+    font-size: 12px;
+    background-color: green;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    position: absolute;
+    top: -6px;
+    right:-50px;
+  }
+  
