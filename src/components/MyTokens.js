@@ -45,24 +45,27 @@ const MyTokens = () => {
   
 
   return (
-    <div>
+    <div className="my-tokens-container">
       <BatchTransfer />
-      <h2>My Tokens</h2>
-      <button onClick={fetchTokens}>Refresh Tokens</button>
+      <h2 className="tokens-heading">My Tokens</h2>
+      <button className="refresh-button" onClick={fetchTokens}>
+        Refresh Tokens
+      </button>
       <div className="token-list">
         {tokens.map((token) => (
           <div key={token.id} className="token-card">
             <p className="token-id">ID: {token.id}</p>
             <img src={token.imageUrl} alt={token.name} className="token-image" />
             <div className="token-info">
-              <p className="token-name">Name: {token.name}</p>
-              <p className="token-description">Description: {token.description}</p>
+              <p className="token-name">{token.name}</p>
+              <p className="token-description">{token.description}</p>
             </div>
           </div>
         ))}
       </div>
     </div>
   );
+  
 };
 
 export default MyTokens;
