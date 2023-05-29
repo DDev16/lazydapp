@@ -17,7 +17,7 @@ const Web3Provider = ({ children }) => {
 
         const contractInstance = new web3Instance.eth.Contract(
           MyNFT.abi,
-          '0x142f8BB8F68d6C848aBC626D086a549aBbE067F3'
+          '0x24d5FEEF90C8E169A909f8Bce5A7846F648464e7'
         );
         setContract(contractInstance);
       } else if (window.web3) {
@@ -26,7 +26,7 @@ const Web3Provider = ({ children }) => {
 
         const contractInstance = new web3Instance.eth.Contract(
           MyNFT.abi,
-          '0x142f8BB8F68d6C848aBC626D086a549aBbE067F3'
+          '0x24d5FEEF90C8E169A909f8Bce5A7846F648464e7'
         );
         setContract(contractInstance);
       } else {

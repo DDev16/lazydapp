@@ -10,23 +10,24 @@ const BatchMint = () => {
   const [uploading, setUploading] = useState(false);
   const [mintSuccess, setMintSuccess] = useState(false);
   const [error, setError] = useState(null);
-  const [useSharedData, setUseSharedData] = useState(false); // State for toggle
+  const [useSharedData, setUseSharedData] = useState(false); 
 
   const nftStorageToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDdGOTA4QjNBRDJGMDFGNjE2MjU1MTA0ODIwNjFmNTY5Mzc2QTg3MjYiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY3OTI5MDE5ODQyMCwibmFtZSI6Ik5FV0VTVCJ9.FGtIrIhKhgSx-10iVlI4sM_78o7jSghZsG5BpqZ4xfA';
   const client = new NFTStorage({ token: nftStorageToken });
 
   const handleChange = (i, e) => {
-    const { name, value, files } = e.target;
+    const { name, value } = e.target;
     setMintData(prevState => {
       const newState = [...prevState];
-      if (name === 'file') {
-        newState[i].file = files[0];
-        newState[i].uri = '';
-      } else {
-        newState[i][name] = value;
-      }
+      newState[i][name] = value;
       return newState;
     });
+  };
+
+  const handleFilesChange = (e) => {
+    const files = [...e.target.files];
+    const newMintData = files.map(file => ({ name: '', description: '', file: file, uri: '' }));
+    setMintData(prevState => [...prevState, ...newMintData]);
   };
 
   const handleImageUpload = async (i) => {
@@ -51,6 +52,14 @@ const BatchMint = () => {
       setError("Error while uploading image: " + error.message);
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleAllImagesUpload = async () => {
+    for (let i = 0; i < mintData.length; i++) {
+      if (mintData[i].file && !mintData[i].uri) {
+        await handleImageUpload(i);
+      }
     }
   };
 
@@ -81,17 +90,17 @@ const BatchMint = () => {
     try {
       const accounts = await web3.eth.getAccounts();
       const names = useSharedData
-        ? Array(mintData.length).fill(mintData[0].name) // Use the same name for all tokens
+        ? Array(mintData.length).fill(mintData[0].name) 
         : mintData.map(data => data.name);
       const descriptions = useSharedData
-        ? Array(mintData.length).fill(mintData[0].description) // Use the same description for all tokens
+        ? Array(mintData.length).fill(mintData[0].description) 
         : mintData.map(data => data.description);
       const uris = mintData.map(data => data.uri);
 
       await contract.methods.batchMint(names, descriptions, uris)
         .send({ from: accounts[0] });
 
-      setMintData([{ name: '', description: '', file: null, uri: '' }]); // Clear field values after successful mint
+      setMintData([{ name: '', description: '', file: null, uri: '' }]);
       setMintSuccess(true);
       setError(null);
     } catch (error) {
@@ -114,6 +123,15 @@ const BatchMint = () => {
             onChange={handleToggle}
           />
         </div>
+        <input
+          type="file"
+          name="file"
+          onChange={handleFilesChange}
+          accept="image/*"
+          required
+          multiple 
+          aria-label="Upload Image"
+        />
         {mintData.map((mintField, idx) => (
           <div key={idx} className="mint-field">
             <label htmlFor={`name-${idx}`}>Token Name:</label>
@@ -126,7 +144,7 @@ const BatchMint = () => {
               placeholder="Token Name"
               required
               aria-label="Token Name"
-              disabled={useSharedData} // Disable input if using shared data
+              disabled={useSharedData}
             />
             <label htmlFor={`description-${idx}`}>Token Description:</label>
             <textarea
@@ -137,23 +155,15 @@ const BatchMint = () => {
               placeholder="Token Description"
               required
               aria-label="Token Description"
-              disabled={useSharedData} // Disable input if using shared data
-            />
-            <input
-              type="file"
-              name="file"
-              onChange={(e) => handleChange(idx, e)}
-              accept="image/*"
-              required
-              aria-label="Upload Image"
+              disabled={useSharedData}
             />
             <button
-              type="button"
-              onClick={() => handleImageUpload(idx)}
-              disabled={uploading || !mintField.file}
-            >
-              {uploading ? 'Uploading...' : 'Upload Image'}
-            </button>
+        type="button"
+        onClick={handleAllImagesUpload}
+        disabled={uploading}
+      >
+        {uploading ? 'Uploading All...' : 'Upload All Images'}
+      </button>
             {mintField.file && (
               <div>
                 <img
