@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { FiHome, FiPlusCircle, FiFolder } from 'react-icons/fi';
-
+import brand from '../assets/brand.png';
 // Styled Components
 const StyledNav = styled.nav`
   background-color: #252525;
@@ -73,7 +73,7 @@ const NavBar = () => {
     <StyledNav>
       <Logo>
         {/* Replace 'logo.png' with the path to your logo image */}
-        <img src="logo192.png" alt="Logo" />
+        <img src="./brand.png" alt="Logo" />
         {/* Replace 'Your App Name' with your actual app name */}
         <span className="app-name">Flare Community Lazy Minting</span>
       </Logo>
