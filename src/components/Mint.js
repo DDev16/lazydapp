@@ -15,7 +15,7 @@ const Mint = () => {
   const [isMinting, setIsMinting] = useState(false);
   const [imagePreview, setImagePreview] = useState('');
   const [formError, setFormError] = useState('');
-  const [freeMints, setFreeMints] = useState(2); // Track the number of free mints for the current user
+  const [freeMints, setFreeMints] = useState(0); // Track the number of free mints for the current user
   const mintingFee = 50; // Specify the minting fee in ether
 
   useEffect(() => {
@@ -26,9 +26,9 @@ const Mint = () => {
         const user = accounts[0];
 
         // Call the contract's function to get the number of free mints for the user
-        const numFreeMints = await contract.methods.getFreeMints(user).call();
+        const numFreeMints = await contract.methods.getRemainingFreeMints(user).call();
 
-        setFreeMints(2 - numFreeMints);
+        setFreeMints(numFreeMints);
       } catch (error) {
         console.error(error);
       }
@@ -84,18 +84,19 @@ const Mint = () => {
       setFormError('An error occurred while minting the token. Please try again.');
     }
   };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-
+  
+    console.log(name, description, uri); // Check the values of name, description, and uri
+  
     if (name.trim() === '' || description.trim() === '' || uri.trim() === '') {
       setFormError('Please fill in all the fields');
       return;
     }
-
+  
     mintToken();
   };
-
+  
   return (
     <div className="mint-container">
       <h1 className="mint-title" aria-label="Mint a new token">
@@ -143,7 +144,7 @@ const Mint = () => {
         )}
         {formError && <div className="form-error">{formError}</div>}
         <div>
-          <label className="mint-label mint-label-free">Remaining Free Mints: {freeMints}</label>
+        <label className="mint-label mint-label-free">Remaining Free Mints: {freeMints}</label>
         </div>
         <div className="mint-fee">Minting Fee: {mintingFee} ETH</div>
         <button type="submit" className="mint-button" disabled={isMinting} aria-label="Mint token">
