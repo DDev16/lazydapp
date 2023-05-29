@@ -1,0 +1,62 @@
+/* BatchMint.css */
+
+.BatchMint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1em;
+    background-color: #f8f9fa;
+}
+
+.BatchMint form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+}
+
+.BatchMint form div {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 1em;
+}
+
+.BatchMint input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+}
+
+.BatchMint button {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.BatchMint button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.BatchMint button[type="button"] {
+    background-color: #007bff;
+}
+
+.BatchMint button[type="button"]:hover {
+    background-color: #0056b3;
+}
+
+.BatchMint button[type="submit"] {
+    background-color: #28a745;
+}
+
+.BatchMint button[type="submit"]:hover {
+    background-color: #1e7e34;
+}
