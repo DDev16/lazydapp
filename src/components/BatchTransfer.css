@@ -1,0 +1,63 @@
+.batch-transfer {
+    margin-top: 20px;
+  }
+  
+  .batch-transfer h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .batch-transfer .recipient,
+  .batch-transfer .token-ids {
+    margin-bottom: 10px;
+  }
+  
+  .batch-transfer label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .batch-transfer input[type="text"] {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .batch-transfer .token-id {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  
+  .batch-transfer .token-id input[type="text"] {
+    flex-grow: 1;
+    margin-right: 5px;
+  }
+  
+  .batch-transfer .token-id button {
+    padding: 5px 10px;
+    background-color: #f44336;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .batch-transfer .token-id button:hover {
+    background-color: #d32f2f;
+  }
+  
+  .batch-transfer button {
+    padding: 8px 16px;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .batch-transfer button:hover {
+    background-color: #45a049;
+  }
+  
