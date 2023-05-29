@@ -138,10 +138,11 @@ const Mint = () => {
           aria-label="Upload image"
         />
         {imagePreview && (
-          <div className="image-preview-container">
-            <img src={imagePreview} alt="Image Preview" className="image-preview" />
-          </div>
-        )}
+  <div className="image-preview-container">
+    <img src={imagePreview} alt="Preview" className="image-preview" />
+  </div>
+)}
+
         {formError && <div className="form-error">{formError}</div>}
         <div>
         <label className="mint-label mint-label-free">Remaining Free Mints: {freeMints}</label>

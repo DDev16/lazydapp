@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { FiHome, FiPlusCircle, FiFolder } from 'react-icons/fi';
-import brand from '../assets/brand.png';
 // Styled Components
 const StyledNav = styled.nav`
   background-color: #252525;
